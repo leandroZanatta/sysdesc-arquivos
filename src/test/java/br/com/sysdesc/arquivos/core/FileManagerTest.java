@@ -18,7 +18,7 @@ public class FileManagerTest {
 
 		Retorno modelo = FileManager.readFile(new File(FileManagerTest.class.getClassLoader().getResource("sicoob.ret").toURI()), Retorno.class);
 
-		assertEquals(0, modelo.getDetalhe().size());
+		assertEquals(5, modelo.getDetalhe().size());
 	}
 
 }
