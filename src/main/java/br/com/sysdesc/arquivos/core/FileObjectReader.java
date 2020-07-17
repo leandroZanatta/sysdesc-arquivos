@@ -1,6 +1,7 @@
 package br.com.sysdesc.arquivos.core;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,13 +27,15 @@ public class FileObjectReader {
 	}
 
 	public static <T> T getObjectFromTextFile(Class<T> classFile, List<String> textFile, TexFileModel textFileModel)
-			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException {
+			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 
-		return mapObject(classFile.newInstance(), textFile, textFileModel.getGroupRecords().getRecords(), new RecordIterator());
+		return mapObject(classFile.getConstructor().newInstance(), textFile, textFileModel.getGroupRecords().getRecords(), new RecordIterator());
 	}
 
 	private static <K> K mapObject(K object, List<String> textFile, List<RecordModel> records, RecordIterator recordIterator)
-			throws FileMapperException, InstantiationException, IllegalAccessException, FormatNotSuportedException {
+			throws FileMapperException, InstantiationException, IllegalAccessException, FormatNotSuportedException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		for (RecordModel record : records) {
 
@@ -53,7 +56,8 @@ public class FileObjectReader {
 	}
 
 	private static <K> void mapearObjeto(K object, List<String> textFile, Field field, RecordModel record, RecordIterator recordIterator)
-			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException {
+			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		if (record.isRepetable()) {
 
@@ -77,7 +81,7 @@ public class FileObjectReader {
 								record.getName(), object.getClass().getName()));
 			}
 
-			Object objeto = field.getType().newInstance();
+			Object objeto = field.getType().getConstructor().newInstance();
 
 			getValueObject(objeto, textFile, record.getInnerRecordModel(), recordIterator);
 
@@ -88,13 +92,14 @@ public class FileObjectReader {
 
 	@SuppressWarnings("unchecked")
 	private static <M> Collection<M> mapearColecao(Field field, List<String> textFile, RecordModel record, RecordIterator recordIterator)
-			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException {
+			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		Collection<M> colecao = instanciarColecao(field);
 
 		while (textFile.size() > recordIterator.getRow() && record.getInnerRecordModel().isIdField(textFile.get(recordIterator.getRow()))) {
 
-			M objetoLista = (M) ReflectionUtils.getGenericTypeFromList(field.getGenericType()).newInstance();
+			M objetoLista = (M) ReflectionUtils.getGenericTypeFromList(field.getGenericType()).getConstructor().newInstance();
 
 			getValueObject(objetoLista, textFile, record.getInnerRecordModel(), recordIterator);
 
@@ -120,7 +125,8 @@ public class FileObjectReader {
 	}
 
 	private static <M> void getValueObject(M instancia, List<String> textFile, InnerRecordModel repetableRecord, RecordIterator recordIterator)
-			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException {
+			throws InstantiationException, IllegalAccessException, FileMapperException, FormatNotSuportedException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		if (repetableRecord.getInnerRecords() != null
 				&& !ListUtil.isNullOrEmpty(repetableRecord.getInnerRecords().getRecords())) {

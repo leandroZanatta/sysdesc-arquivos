@@ -2,6 +2,7 @@ package br.com.sysdesc.arquivos.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -33,7 +34,8 @@ public class FileManager {
 
 			return FileObjectReader.getObjectFromTextFile(instance, textFile, MetaModelReader.readMetaModel(instance));
 
-		} catch (FileMapperException | InstantiationException | IllegalAccessException | SecurityException e) {
+		} catch (FileMapperException | InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException e) {
 
 			throw new SysdescArquivosException("Falha ao ler o arquivo", e);
 		}

@@ -3,6 +3,7 @@ package br.com.sysdesc.arquivos.formatters;
 import static br.com.sysdesc.arquivos.formatters.enumerators.FormatterEnum.PADDING_LEFT;
 import static br.com.sysdesc.arquivos.formatters.enumerators.FormatterEnum.PADDING_RIGHT;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -44,8 +45,9 @@ public class FormatterFactory {
 
 			try {
 
-				return formatters.get(keyFormat).newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
+				return formatters.get(keyFormat).getConstructor().newInstance();
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
 
 				log.error("Erro ao instanciar formatador", e);
 			}
